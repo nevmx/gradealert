@@ -33,8 +33,15 @@ def getTranscript(browser, us, ps):
 	# Return the transcript page
 	return t_pg 
 
+# Get the username and password
+with open("ignore/data.txt", "r") as data:
+	# Exclude the last character - it is a '\n'
+	username = data.readline()[:-1]
+	password = data.readline()[:-1]
+data.close()
+
 # Main program
 browser = mechanicalsoup.Browser()
-t_page = getTranscript(browser, "username", "password")
+t_page = getTranscript(browser, username, password)
 
 print(t_page.status_code)
