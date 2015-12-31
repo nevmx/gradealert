@@ -1,5 +1,11 @@
 import mechanicalsoup
 
+class Transcript(object):
+	def __init__(self, name, student_id, perm_code):
+		this.name = name
+		this.student_id = student_id
+		this.perm_code = perm_code
+
 class Course(object):
 	def __init__(self, name, grade):
 		self.name = name
@@ -33,6 +39,9 @@ def getTranscript(browser, us, ps):
 	# Return the transcript page
 	return t_pg 
 
+def parseCourses(page):
+	pass
+
 # Get the username and password
 with open("ignore/data.txt", "r") as data:
 	# Exclude the last character - it is a '\n'
@@ -44,4 +53,17 @@ data.close()
 browser = mechanicalsoup.Browser()
 t_page = getTranscript(browser, username, password)
 
-print(t_page.status_code)
+# Verify correct response
+if (t_page.status_code != 200):
+	print("ERROR: Cannot access the transcript page")
+	exit(1)
+
+courses = []
+
+# All the relevant data is stored in span tags with
+# attribute fieldmediumtext
+spans = t_page.soup.select("span.fieldmediumtext")
+
+# Extract the text without the tags and replace \xa0 character with ''
+textlist = [x.getText().replace('\xa0', '') for x in spans] 
+
