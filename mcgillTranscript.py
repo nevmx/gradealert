@@ -1,6 +1,29 @@
 import mechanicalsoup
 import re
 import shutil
+import datetime
+
+def generateDelta():
+	# Try to open file in append mode
+	# and open grade files to read
+	try:
+		delta_file = open("delta.txt", "a")
+		grade_file = open("grades.txt", "r")
+		grade_old_file = open("grades_old.txt", "r")
+	except IOError:
+		print("ERROR: IOError raised in generateDelta()")
+		exit(1)
+	
+	grades = grade_file.readlines()
+	grades_old = grade_old_file.readlines()
+
+	# Remove common strings in the lists
+	# We are certainly not interested in those
+	delta_list = list(set(grades)^set(grades_old))
+	if delta_list:
+		delta_file.write(str(delta_list) + " " + str(datetime.datetime.now()) + '\n')
+		print("NEW GRADE: " + str(delta_list))
+ 
 
 def getTranscript(browser, us, ps):
 	# Request login page
@@ -71,3 +94,4 @@ for i in range(len(textlist)):
 		grade_file.write(gradestring + "\n")
 
 grade_file.close()
+generateDelta()
