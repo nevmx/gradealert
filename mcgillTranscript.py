@@ -1,18 +1,6 @@
 import mechanicalsoup
-
-class Transcript(object):
-	def __init__(self, name, student_id, perm_code):
-		this.name = name
-		this.student_id = student_id
-		this.perm_code = perm_code
-
-class Course(object):
-	def __init__(self, name, grade):
-		self.name = name
-		self.grade = grade
-	def __str__(self):
-		return self.name + ": " + self.grade
-
+import re
+import shutil
 
 def getTranscript(browser, us, ps):
 	# Request login page
@@ -67,3 +55,19 @@ spans = t_page.soup.select("span.fieldmediumtext")
 # Extract the text without the tags and replace \xa0 character with ''
 textlist = [x.getText().replace('\xa0', '') for x in spans] 
 
+# Copy old file
+try:
+	shutil.copyfile('grades.txt', 'grades_old.txt')
+except IOError:
+	print("No old grade file found")
+
+# Open file to save all the grades
+grade_file = open("grades.txt", "w")
+
+# Loop through all the lines of data
+for i in range(len(textlist)):
+	if re.search(r'\b[A-Z]{4}\s[0-9]{3}\b', textlist[i]):
+		gradestring = textlist[i] + " " + textlist[i+4]
+		grade_file.write(gradestring + "\n")
+
+grade_file.close()
